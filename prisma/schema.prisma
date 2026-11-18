@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Temporary model to verify database connection and migrations in Phase 3.
+// Will be replaced by full CRM models in Phase 4.
+model SystemCheck {
+  id        String   @id @default(cuid())
+  message   String   @default("Database connected successfully")
+  createdAt DateTime @default(now())
+}
