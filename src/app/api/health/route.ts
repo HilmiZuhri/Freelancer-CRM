@@ -3,15 +3,14 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    // Execute a simple query against PostgreSQL via Prisma
     await prisma.$queryRaw`SELECT 1`;
-    const checkCount = await prisma.systemCheck.count();
+    const userCount = await prisma.user.count();
 
     return NextResponse.json(
       {
         status: "ok",
         database: "connected",
-        systemCheckRows: checkCount,
+        usersCount: userCount,
         timestamp: new Date().toISOString(),
       },
       { status: 200 }
