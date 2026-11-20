@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Bell, Menu, Plus, Search, User, Settings, LogOut } from "lucide-react";
+import { logoutUser } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -22,8 +23,22 @@ import {
 } from "@/components/ui/sheet";
 import { SidebarContent } from "./sidebar";
 
-export function Topbar() {
+interface TopbarProps {
+  user: {
+    name: string;
+    email: string;
+  };
+}
+
+export function Topbar({ user }: TopbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const initials = user.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card/80 backdrop-blur-md px-4 sm:px-6 lg:px-8">
@@ -86,15 +101,15 @@ export function Topbar() {
             >
               <Avatar className="h-8 w-8 border border-border">
                 <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                  AM
+                  {initials || "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="hidden md:flex flex-col items-start text-left">
                 <span className="text-sm font-medium leading-none">
-                  Alex Morgan
+                  {user.name}
                 </span>
                 <span className="text-[11px] text-muted-foreground mt-0.5">
-                  Freelance Designer
+                  {user.email}
                 </span>
               </div>
             </Button>
@@ -102,10 +117,8 @@ export function Topbar() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium">Alex Morgan</p>
-                <p className="text-xs text-muted-foreground">
-                  alex@freelancer.io
-                </p>
+                <p className="text-sm font-medium">{user.name}</p>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -122,7 +135,10 @@ export function Topbar() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer">
+            <DropdownMenuItem
+              onClick={() => logoutUser()}
+              className="text-destructive focus:text-destructive cursor-pointer"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Log out
             </DropdownMenuItem>
