@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { calculateProjectProgress } from "@/lib/project-utils";
 
 export const CLIENTS_PAGE_SIZE = 6;
 
@@ -126,8 +127,7 @@ export async function getClientById(id: string, userId: string) {
     projects: client.projects.map((p) => {
       const totalTasks = p.tasks.length;
       const doneTasks = p.tasks.filter((t) => t.status === "DONE").length;
-      const progress =
-        totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+      const progress = calculateProjectProgress(p.status, p.tasks);
 
       return {
         id: p.id,

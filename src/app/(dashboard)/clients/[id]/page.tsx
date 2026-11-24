@@ -217,7 +217,12 @@ export default async function ClientDetailPage({
                     {client.projects.map((project) => (
                       <TableRow key={project.id}>
                         <TableCell className="font-medium">
-                          {project.title}
+                          <Link
+                            href={`/projects/${project.id}`}
+                            className="hover:underline text-foreground"
+                          >
+                            {project.title}
+                          </Link>
                         </TableCell>
                         <TableCell>
                           <ProjectStatusBadge status={project.status} />
