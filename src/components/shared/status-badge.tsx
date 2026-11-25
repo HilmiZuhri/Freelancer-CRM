@@ -1,5 +1,10 @@
 import { Badge } from "@/components/ui/badge";
-import { InvoiceStatus, ProjectStatus, TaskPriority } from "@/types/crm";
+import {
+  InvoiceStatus,
+  ProjectStatus,
+  TaskPriority,
+  TaskStatus,
+} from "@/types/crm";
 import { cn } from "@/lib/utils";
 
 const projectStatusConfig: Record<
@@ -64,6 +69,24 @@ const priorityConfig: Record<
   },
 };
 
+const taskStatusConfig: Record<
+  TaskStatus,
+  { label: string; className: string }
+> = {
+  TODO: {
+    label: "To Do",
+    className: "bg-slate-100 text-slate-700 border-slate-200",
+  },
+  IN_PROGRESS: {
+    label: "In Progress",
+    className: "bg-blue-50 text-blue-700 border-blue-200",
+  },
+  DONE: {
+    label: "Done",
+    className: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  },
+};
+
 export function ProjectStatusBadge({ status }: { status: ProjectStatus }) {
   const config = projectStatusConfig[status];
   return (
@@ -84,6 +107,15 @@ export function InvoiceStatusBadge({ status }: { status: InvoiceStatus }) {
 
 export function PriorityBadge({ priority }: { priority: TaskPriority }) {
   const config = priorityConfig[priority];
+  return (
+    <Badge variant="outline" className={cn("font-medium", config.className)}>
+      {config.label}
+    </Badge>
+  );
+}
+
+export function TaskStatusBadge({ status }: { status: TaskStatus }) {
+  const config = taskStatusConfig[status];
   return (
     <Badge variant="outline" className={cn("font-medium", config.className)}>
       {config.label}

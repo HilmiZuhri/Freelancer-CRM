@@ -5,7 +5,6 @@ import {
   Building2,
   Calendar,
   CheckCircle2,
-  CheckSquare,
   DollarSign,
   FileText,
   User,
@@ -30,12 +29,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  InvoiceStatusBadge,
-  PriorityBadge,
-  ProjectStatusBadge,
-} from "@/components/shared/status-badge";
+import { InvoiceStatusBadge, ProjectStatusBadge, } from "@/components/shared/status-badge";
 import { ProjectDetailActions } from "@/components/projects/project-detail-actions";
+import { ProjectTasksCard } from "@/components/projects/project-tasks-card";
 
 interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;
@@ -203,57 +199,12 @@ export default async function ProjectDetailPage({
         </Card>
 
         <Card className="lg:col-span-8 shadow-xs">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-base flex items-center gap-2">
-                <CheckSquare className="h-4 w-4 text-primary" />
-                Project Tasks
-              </CardTitle>
-              <CardDescription>
-                Deliverables driving this project&apos;s progress
-              </CardDescription>
-            </div>
-            <Button size="sm" variant="outline" asChild>
-              <Link href="/tasks">Manage Tasks</Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {project.tasks.length === 0 ? (
-              <div className="py-8 text-center text-sm text-muted-foreground border border-dashed border-border rounded-lg">
-                No tasks in this project yet. Task creation will be enabled in
-                Phase 8!
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Task</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Due Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {project.tasks.map((task) => (
-                    <TableRow key={task.id}>
-                      <TableCell className="font-medium">{task.title}</TableCell>
-                      <TableCell>
-                        <PriorityBadge priority={task.priority} />
-                      </TableCell>
-                      <TableCell className="text-xs font-medium">
-                        {task.status.replace("_", " ")}
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {task.dueDate
-                          ? formatDate(task.dueDate.toISOString())
-                          : "—"}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
+          <ProjectTasksCard
+            projectId={project.id}
+            projectTitle={project.title}
+            clientName={project.client.name}
+            tasks={project.tasks}
+          />
         </Card>
       </div>
 
