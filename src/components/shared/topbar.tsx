@@ -41,7 +41,7 @@ export function Topbar({ user }: TopbarProps) {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card/80 backdrop-blur-md px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card/80 backdrop-blur-md px-4 sm:px-6 lg:px-8 print:hidden">
       {/* Left: Mobile Drawer Trigger + Global Search */}
       <div className="flex items-center gap-3 flex-1 max-w-md">
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>

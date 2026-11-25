@@ -287,7 +287,9 @@ export default async function ClientDetailPage({
                     {client.invoices.map((inv) => (
                       <TableRow key={inv.id}>
                         <TableCell className="font-mono text-xs font-semibold">
-                          {inv.invoiceNumber}
+                          <Link href={`/invoices/${inv.id}`} className="hover:underline">
+                            {inv.invoiceNumber}
+                          </Link>
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
                           {formatDate(inv.issueDate.toISOString())}

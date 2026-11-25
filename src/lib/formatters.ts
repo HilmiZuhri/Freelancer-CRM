@@ -1,9 +1,12 @@
-export function formatCurrency(amount: number): string {
+export function formatCurrency(
+  amount: number,
+  showDecimals: boolean = false
+): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: showDecimals ? 2 : 0,
+    maximumFractionDigits: showDecimals ? 2 : 0,
   }).format(amount);
 }
 

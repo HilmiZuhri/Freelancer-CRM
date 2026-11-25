@@ -1,25 +1,70 @@
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { requireAuth } from "@/lib/auth-utils";
+import {
+  getInvoiceFormOptions,
+  getInvoices,
+  getNextInvoiceNumber,
+} from "@/lib/data/invoices";
+import { InvoiceFormDialog } from "@/components/invoices/invoice-form-dialog";
+import { InvoicesToolbar } from "@/components/invoices/invoices-toolbar";
 import { InvoicesTable } from "@/components/invoices/invoices-table";
-import { mockInvoices } from "@/lib/mock-data";
 
-export default function InvoicesPage() {
+interface InvoicesPageProps {
+  searchParams: Promise<{
+    search?: string;
+    status?: string;
+    page?: string;
+  }>;
+}
+
+export default async function InvoicesPage({
+  searchParams,
+}: InvoicesPageProps) {
+  const { userId } = await requireAuth();
+  const params = await searchParams;
+
+  const search = params.search ?? "";
+  const status = params.status ?? "ALL";
+  const page = Number(params.page) || 1;
+
+  const [
+    { invoices, totalCount, totalPages, currentPage },
+    { clients, projects },
+    nextInvoiceNumber,
+  ] = await Promise.all([
+    getInvoices({ userId, search, status, page }),
+    getInvoiceFormOptions(userId),
+    getNextInvoiceNumber(userId),
+  ]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Invoices</h1>
           <p className="text-sm text-muted-foreground">
-            Create, send, and track client billing and payments.
+            Create itemized invoices, track payments, and export PDFs.
           </p>
         </div>
-        <Button className="gap-1.5 self-start sm:self-auto">
-          <Plus className="h-4 w-4" />
-          Create Invoice
-        </Button>
+        <InvoiceFormDialog
+          mode="create"
+          clients={clients}
+          projects={projects}
+          defaultInvoiceNumber={nextInvoiceNumber}
+        />
       </div>
 
-      <InvoicesTable invoices={mockInvoices} />
+      <InvoicesToolbar initialSearch={search} initialStatus={status} />
+
+      <InvoicesTable
+        invoices={invoices}
+        clients={clients}
+        projects={projects}
+        nextInvoiceNumber={nextInvoiceNumber}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        hasActiveSearchOrFilter={Boolean(search || status !== "ALL")}
+      />
     </div>
   );
 }
