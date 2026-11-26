@@ -1,4 +1,5 @@
 import { requireAuth } from "@/lib/auth-utils";
+import { prisma } from "@/lib/prisma";
 import { Sidebar } from "@/components/shared/sidebar";
 import { Topbar } from "@/components/shared/topbar";
 
@@ -7,11 +8,14 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = await requireAuth();
+  const { user, userId } = await requireAuth();
+  const clientsCount = await prisma.client.count({
+    where: { userId },
+  });
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar />
+      <Sidebar clientsCount={clientsCount} />
 
       <div className="lg:pl-64 print:pl-0 flex flex-col min-h-screen">
         <Topbar
@@ -19,6 +23,7 @@ export default async function DashboardLayout({
             name: user.name ?? "Freelancer",
             email: user.email ?? "",
           }}
+          clientsCount={clientsCount}
         />
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto print:p-0 print:max-w-none">
           {children}

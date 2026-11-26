@@ -28,10 +28,14 @@ const secondaryNavItems = [
 ];
 
 interface SidebarContentProps {
+  clientsCount?: number;
   onNavigate?: () => void;
 }
 
-export function SidebarContent({ onNavigate }: SidebarContentProps) {
+export function SidebarContent({
+  clientsCount = 0,
+  onNavigate,
+}: SidebarContentProps) {
   const pathname = usePathname();
 
   return (
@@ -117,7 +121,7 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
         <div className="rounded-lg bg-sidebar-accent/60 p-3">
           <p className="text-xs font-medium text-white">Freelancer Plan</p>
           <p className="text-[11px] text-sidebar-foreground/65 mt-0.5">
-            5 active clients • Mock mode
+            {clientsCount} {clientsCount === 1 ? "client" : "clients"} • Live Workspace
           </p>
         </div>
       </div>
@@ -125,10 +129,10 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ clientsCount = 0 }: { clientsCount?: number }) {
   return (
     <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 lg:block lg:w-64 border-r border-sidebar-border print:hidden">
-      <SidebarContent />
+      <SidebarContent clientsCount={clientsCount} />
     </aside>
   );
 }

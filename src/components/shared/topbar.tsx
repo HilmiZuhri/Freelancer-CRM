@@ -28,9 +28,10 @@ interface TopbarProps {
     name: string;
     email: string;
   };
+  clientsCount?: number;
 }
 
-export function Topbar({ user }: TopbarProps) {
+export function Topbar({ user, clientsCount = 0 }: TopbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const initials = user.name
@@ -60,7 +61,10 @@ export function Topbar({ user }: TopbarProps) {
             className="w-64 p-0 bg-sidebar border-sidebar-border text-sidebar-foreground"
           >
             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-            <SidebarContent onNavigate={() => setMobileMenuOpen(false)} />
+            <SidebarContent
+              clientsCount={clientsCount}
+              onNavigate={() => setMobileMenuOpen(false)}
+            />
           </SheetContent>
         </Sheet>
 
