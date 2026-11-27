@@ -4,7 +4,7 @@ import {
   ProjectStatus,
   TaskPriority,
   TaskStatus,
-} from "@/types/crm";
+} from "@prisma/client";
 import { cn } from "@/lib/utils";
 
 const projectStatusConfig: Record<

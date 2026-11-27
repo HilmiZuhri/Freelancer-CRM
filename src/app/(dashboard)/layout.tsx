@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth-utils";
 import { prisma } from "@/lib/prisma";
 import { Sidebar } from "@/components/shared/sidebar";
@@ -8,10 +9,21 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, userId } = await requireAuth();
-  const clientsCount = await prisma.client.count({
-    where: { userId },
-  });
+  const { userId } = await requireAuth();
+
+  const [dbUser, clientsCount] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true, email: true },
+    }),
+    prisma.client.count({
+      where: { userId },
+    }),
+  ]);
+
+  if (!dbUser) {
+    redirect("/login");
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -20,8 +32,8 @@ export default async function DashboardLayout({
       <div className="lg:pl-64 print:pl-0 flex flex-col min-h-screen">
         <Topbar
           user={{
-            name: user.name ?? "Freelancer",
-            email: user.email ?? "",
+            name: dbUser.name ?? "Freelancer",
+            email: dbUser.email,
           }}
           clientsCount={clientsCount}
         />

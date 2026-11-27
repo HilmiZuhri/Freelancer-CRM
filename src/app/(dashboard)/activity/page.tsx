@@ -1,40 +1,45 @@
-import { Activity } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockActivities } from "@/lib/mock-data";
+import { requireAuth } from "@/lib/auth-utils";
+import { getActivityLogs } from "@/lib/data/activity";
+import { ActivityList } from "@/components/activity/activity-list";
 
-export default function ActivityPage() {
+interface ActivityPageProps {
+  searchParams: Promise<{
+    type?: string;
+    page?: string;
+  }>;
+}
+
+export default async function ActivityPage({
+  searchParams,
+}: ActivityPageProps) {
+  const { userId } = await requireAuth();
+  const params = await searchParams;
+
+  const type = params.type ?? "ALL";
+  const page = Number(params.page) || 1;
+
+  const { logs, totalCount, totalPages, currentPage } = await getActivityLogs({
+    userId,
+    entityType: type,
+    page,
+  });
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Activity Log</h1>
         <p className="text-sm text-muted-foreground">
-          Audit trail of important workspace actions.
+          Complete audit trail of your clients, projects, tasks, and invoices.
         </p>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Activity className="h-4 w-4 text-primary" />
-            Recent Workspace Events
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {mockActivities.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center justify-between border-b border-border pb-3 last:border-none last:pb-0"
-            >
-              <div>
-                <p className="text-sm font-medium">{item.action}</p>
-                <p className="text-xs text-muted-foreground">{item.target}</p>
-              </div>
-              <span className="text-xs text-muted-foreground">
-                {item.timestamp}
-              </span>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+
+      <ActivityList
+        logs={logs}
+        initialType={type}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 }
